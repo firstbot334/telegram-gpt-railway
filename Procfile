@@ -1,1 +1,1 @@
-worker: bash -lc 'python validate_session.py && python collector_telethon.py'
+worker: bash -lc 'python3 validate_session.py && python3 collector_telethon.py'
