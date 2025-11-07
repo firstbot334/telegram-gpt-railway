@@ -1,12 +1,14 @@
+import os
 import asyncio
 from datetime import datetime, timedelta, timezone
 from telethon import TelegramClient
+from telethon.sessions import StringSession
 from telethon.errors import (ChannelPrivateError, InviteHashExpiredError, FloodWaitError)
 from db import SessionLocal
 from models import Article
 from config import NEWS_SOURCES, BACKFILL_DAYS
 
-# 내 계정 API 정보
+# 고정된 내 계정 API (요청하신 값)
 API_ID = 39591049
 API_HASH = "63051274cc060175aee8f62d636cfa6f"
 
@@ -17,15 +19,20 @@ async def collect():
         print("⚠️  NEWS_SOURCES is empty — nothing to collect.")
         return
 
-    client = TelegramClient("session", API_ID, API_HASH)
-    await client.start()  # 처음 실행 시 인증코드 입력
+    sess = os.getenv("TELETHON_SESSION", "").strip()
+    if not sess:
+        raise RuntimeError("TELETHON_SESSION env var is missing — create one with make_session.py and set it in Railway.")
+
+    client = TelegramClient(StringSession(sess), API_ID, API_HASH)
+    await client.connect()
+    if not await client.is_user_authorized():
+        raise RuntimeError("Provided TELETHON_SESSION is not authorized. Recreate it with make_session.py.")
 
     cutoff = datetime.now(KST) - timedelta(days=BACKFILL_DAYS)
     session = SessionLocal()
 
     try:
         sources = NEWS_SOURCES if isinstance(NEWS_SOURCES, (list, tuple)) else [NEWS_SOURCES]
-
         for src in sources:
             try:
                 entity = await client.get_input_entity(src)
@@ -39,11 +46,9 @@ async def collect():
                 text = (msg.message or msg.raw_text or "").strip()
                 if not text:
                     continue
-
                 exists = session.query(Article).filter(Article.text == text).first()
                 if exists:
                     continue
-
                 session.add(Article(text=text, url=None, created_at=msg.date.astimezone(KST)))
                 session.commit()
                 print(f"[ok] saved from {src}: {text[:60]}...")
