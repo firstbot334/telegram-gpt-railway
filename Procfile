@@ -1,1 +1,0 @@
-start: bash -lc "python collector_telethon.py & while true; do python summarize_news.py --window day; sleep 21600; done"
