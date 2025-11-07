@@ -1,0 +1,5 @@
+{
+  "project": "telegram-gpt-railway",
+  "service": "telegram-gpt-railway",
+  "environment": "production"
+}
