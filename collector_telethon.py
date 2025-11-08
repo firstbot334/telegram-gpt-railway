@@ -1,10 +1,11 @@
-# collector_telethon.py — multi-source + save `source`
-import os, asyncio
+# collector_telethon.py — save `source` and `sha256` (dedupe)
+import os, asyncio, hashlib
 from typing import List
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 from telethon.tl.functions.channels import JoinChannelRequest
 from zoneinfo import ZoneInfo
+from sqlalchemy.exc import IntegrityError
 from db import SessionLocal
 from models import Article
 
@@ -35,24 +36,29 @@ async def collect_from(client: TelegramClient, source: str, session):
             await client(JoinChannelRequest(source))
         except Exception:
             pass
-    count = 0
+    added = 0; skipped = 0
     async for msg in client.iter_messages(source, limit=LIMIT):
         txt = getattr(msg, "message", None) or getattr(msg, "text", None) or ""
         txt = (txt or "").strip()
         if not txt:
             continue
+        h = hashlib.sha256(txt.encode("utf-8")).hexdigest()
         try:
             session.add(Article(
                 text=txt,
                 url=None,
                 date=msg.date.astimezone(KST) if msg.date else None,
-                source=source
+                source=source,
+                sha256=h
             ))
             session.commit()
-            count += 1
+            added += 1
+        except IntegrityError:
+            session.rollback()
+            skipped += 1
         except Exception:
             session.rollback()
-    print(f"[collect] {source} -> stored {count} rows.")
+    print(f"[collect] {source} -> stored {added} rows, skipped {skipped} dups.")
 
 async def main():
     sources = parse_sources(SRC_CHANNELS)

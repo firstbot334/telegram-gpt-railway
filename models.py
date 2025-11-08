@@ -1,6 +1,5 @@
-# models.py (autofix on import: pg_trgm, table/columns, GIN index)
-import os
-import sqlalchemy as sa
+# models.py (with `source`, `sha256` and indexes; auto-creates on import)
+import os, sqlalchemy as sa
 from sqlalchemy import Column, Integer, String, Text, DateTime, Index
 from sqlalchemy.orm import declarative_base
 
@@ -16,8 +15,10 @@ if DATABASE_URL:
             conn.exec_driver_sql("ALTER TABLE articles ADD COLUMN IF NOT EXISTS text TEXT;")
             conn.exec_driver_sql("ALTER TABLE articles ADD COLUMN IF NOT EXISTS summary TEXT;")
             conn.exec_driver_sql("ALTER TABLE articles ADD COLUMN IF NOT EXISTS source VARCHAR;")
+            conn.exec_driver_sql("ALTER TABLE articles ADD COLUMN IF NOT EXISTS sha256 VARCHAR(64);")
             conn.exec_driver_sql("DROP INDEX IF EXISTS ix_articles_text;")
             conn.exec_driver_sql("CREATE INDEX IF NOT EXISTS ix_articles_text_trgm ON articles USING gin (text gin_trgm_ops);")
+            conn.exec_driver_sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_articles_sha256 ON articles(sha256);")
     except Exception:
         pass
     finally:
@@ -30,17 +31,12 @@ Base = declarative_base()
 
 class Article(Base):
     __tablename__ = "articles"
-
     id = Column(Integer, primary_key=True, autoincrement=True)
     date = Column(DateTime(timezone=True))
     url = Column(String)
     text = Column(Text)
     summary = Column(Text)
-    source = Column(String)  # NEW: channel username or id
+    source = Column(String)
+    sha256 = Column(String(64), unique=True)
 
-Index(
-    "ix_articles_text_trgm",
-    Article.text,
-    postgresql_using="gin",
-    postgresql_ops={"text": "gin_trgm_ops"},
-)
+Index("ix_articles_text_trgm", Article.text, postgresql_using="gin", postgresql_ops={"text": "gin_trgm_ops"})
