@@ -1,4 +1,4 @@
-# models.py (autofix on import: pg_trgm, date/summary columns, GIN index)
+# models.py (autofix on import: pg_trgm, table/columns, GIN index)
 import os
 import sqlalchemy as sa
 from sqlalchemy import Column, Integer, String, Text, DateTime, Index

@@ -1,0 +1,62 @@
+2025-11-08T12:22:38.000000000Z [inf]  Starting Container
+2025-11-08T12:22:41.107721351Z [inf]  [validate] user: 6825582297
+2025-11-08T12:22:41.107729097Z [inf]  [validate] is_bot?: False
+2025-11-08T12:22:42.901484096Z [inf]  [info] reading from: @nje2e
+2025-11-08T12:22:44.236603341Z [err]      return future.result()
+2025-11-08T12:22:44.236612933Z [err]             ^^^^^^^^^^^^^^^
+2025-11-08T12:22:44.236671376Z [err]  Traceback (most recent call last):
+2025-11-08T12:22:44.236680625Z [err]    File "/app/collector_telethon.py", line 58, in <module>
+2025-11-08T12:22:44.236688362Z [err]      asyncio.run(main())
+2025-11-08T12:22:44.236694943Z [err]    File "/mise/installs/python/3.11.9/lib/python3.11/asyncio/runners.py", line 190, in run
+2025-11-08T12:22:44.236706617Z [err]             ^^^^^^^^^^^^^^^^
+2025-11-08T12:22:44.236706796Z [err]      return runner.run(main)
+2025-11-08T12:22:44.236716661Z [err]    File "/mise/installs/python/3.11.9/lib/python3.11/asyncio/runners.py", line 118, in run
+2025-11-08T12:22:44.236724879Z [err]      return self._loop.run_until_complete(task)
+2025-11-08T12:22:44.236733854Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-08T12:22:44.236742153Z [err]    File "/mise/installs/python/3.11.9/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+2025-11-08T12:22:44.236774370Z [inf]  ✅ collector done.
+2025-11-08T12:22:45.202097716Z [err]    File "/app/collector_telethon.py", line 48, in main
+2025-11-08T12:22:45.202118989Z [err]      session.add(Article(text=text, url=None, created_at=msg.date.astimezone(KST))); session.commit()
+2025-11-08T12:22:45.202131810Z [err]                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-08T12:22:45.202142521Z [err]    File "<string>", line 4, in __init__
+2025-11-08T12:22:45.202152934Z [err]    File "/app/.venv/lib/python3.11/site-packages/sqlalchemy/orm/state.py", line 566, in _initialize_instance
+2025-11-08T12:22:45.202163191Z [err]      with util.safe_reraise():
+2025-11-08T12:22:45.202182695Z [err]    File "/app/.venv/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+2025-11-08T12:22:45.202194830Z [err]      raise exc_value.with_traceback(exc_tb)
+2025-11-08T12:22:45.202207183Z [err]    File "/app/.venv/lib/python3.11/site-packages/sqlalchemy/orm/state.py", line 564, in _initialize_instance
+2025-11-08T12:22:45.202220470Z [err]      manager.original_init(*mixed[1:], **kwargs)
+2025-11-08T12:22:45.202233334Z [err]    File "/app/.venv/lib/python3.11/site-packages/sqlalchemy/orm/decl_base.py", line 2142, in _declarative_constructor
+2025-11-08T12:22:45.202241362Z [err]      raise TypeError(
+2025-11-08T12:22:45.202250158Z [err]  TypeError: 'created_at' is an invalid keyword argument for Article
+2025-11-08T12:22:47.020866411Z [inf]  [validate] user: 6825582297
+2025-11-08T12:22:47.020873864Z [inf]  [validate] is_bot?: False
+2025-11-08T12:22:49.845148395Z [inf]  [info] reading from: @nje2e
+2025-11-08T12:22:50.236305178Z [err]    File "/app/collector_telethon.py", line 48, in main
+2025-11-08T12:22:50.236312159Z [inf]  ✅ collector done.
+2025-11-08T12:22:50.236314260Z [err]      session.add(Article(text=text, url=None, created_at=msg.date.astimezone(KST))); session.commit()
+2025-11-08T12:22:50.236318395Z [err]  Traceback (most recent call last):
+2025-11-08T12:22:50.236324274Z [err]    File "/app/collector_telethon.py", line 58, in <module>
+2025-11-08T12:22:50.236330182Z [err]      asyncio.run(main())
+2025-11-08T12:22:50.236335922Z [err]    File "/mise/installs/python/3.11.9/lib/python3.11/asyncio/runners.py", line 190, in run
+2025-11-08T12:22:50.236341319Z [err]      return runner.run(main)
+2025-11-08T12:22:50.236347502Z [err]             ^^^^^^^^^^^^^^^^
+2025-11-08T12:22:50.236353426Z [err]    File "/mise/installs/python/3.11.9/lib/python3.11/asyncio/runners.py", line 118, in run
+2025-11-08T12:22:50.236358611Z [err]      return self._loop.run_until_complete(task)
+2025-11-08T12:22:50.236362431Z [err]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-08T12:22:50.236366232Z [err]    File "/mise/installs/python/3.11.9/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+2025-11-08T12:22:50.236370490Z [err]      return future.result()
+2025-11-08T12:22:50.236374433Z [err]             ^^^^^^^^^^^^^^^
+2025-11-08T12:22:50.238238426Z [err]                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-08T12:22:50.238247280Z [err]  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-11-08T12:22:50.238254666Z [err]    File "<string>", line 4, in __init__
+2025-11-08T12:22:50.238260490Z [err]    File "/app/.venv/lib/python3.11/site-packages/sqlalchemy/orm/state.py", line 566, in _initialize_instance
+2025-11-08T12:22:50.238265759Z [err]      with util.safe_reraise():
+2025-11-08T12:22:50.238270968Z [err]    File "/app/.venv/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+2025-11-08T12:22:50.238274967Z [err]      raise exc_value.with_traceback(exc_tb)
+2025-11-08T12:22:50.238278710Z [err]    File "/app/.venv/lib/python3.11/site-packages/sqlalchemy/orm/state.py", line 564, in _initialize_instance
+2025-11-08T12:22:50.238282559Z [err]      manager.original_init(*mixed[1:], **kwargs)
+2025-11-08T12:22:50.238286670Z [err]    File "/app/.venv/lib/python3.11/site-packages/sqlalchemy/orm/decl_base.py", line 2142, in _declarative_constructor
+2025-11-08T12:22:50.238291178Z [err]      raise TypeError(
+2025-11-08T12:22:50.238295628Z [err]  TypeError: 'created_at' is an invalid keyword argument for Article
+2025-11-08T12:22:53.909552719Z [inf]  [validate] user: 6825582297
+2025-11-08T12:22:53.909559490Z [inf]  [validate] is_bot?: False

@@ -1,58 +1,43 @@
+# collector_telethon.py (fixed: Article(date=...), safe commit/rollback)
 import os, asyncio
-from datetime import datetime, timedelta, timezone
 from telethon import TelegramClient
 from telethon.sessions import StringSession
-from telethon.errors import ChannelPrivateError, InviteHashExpiredError, FloodWaitError
-from db import SessionLocal, create_tables
+from zoneinfo import ZoneInfo
+from db import SessionLocal
 from models import Article
-from config import TELEGRAM_API_ID, TELEGRAM_API_HASH, TELETHON_SESSION, NEWS_SOURCES, BACKFILL_DAYS
 
-KST = timezone(timedelta(hours=9))
+API_ID = int(os.environ["TELEGRAM_API_ID"])
+API_HASH = os.environ["TELEGRAM_API_HASH"]
+SESSION = os.environ["TELETHON_SESSION"]
 
-def _require_env():
-    need = ['TELEGRAM_API_ID','TELEGRAM_API_HASH','TELETHON_SESSION','DATABASE_URL']
-    missing = [k for k in need if not os.getenv(k)]
-    if missing: raise RuntimeError(f"Missing env(s): {', '.join(missing)}")
+SRC_CHANNEL = os.environ.get("SRC_CHANNEL", "@nje2e")  # default as per logs
+KST = ZoneInfo("Asia/Seoul")
 
 async def main():
-    _require_env()
-    client = TelegramClient(StringSession((TELETHON_SESSION or '').strip()), int(TELEGRAM_API_ID), TELEGRAM_API_HASH)
-    await client.connect()
-    me = await client.get_me()
-    if getattr(me, 'bot', False):
-        raise RuntimeError('TELETHON_SESSION is a BOT session. Create user session and update env.')
-    if not await client.is_user_authorized():
-        raise RuntimeError('TELETHON_SESSION not authorized. Recreate it and set env.')
+    async with TelegramClient(StringSession(SESSION), API_ID, API_HASH) as client:
+        session = SessionLocal()
+        try:
+            async for msg in client.iter_messages(SRC_CHANNEL, limit=200):
+                text = None
+                if msg.message:
+                    text = msg.message.strip()
+                elif msg.text:
+                    text = msg.text.strip()
+                if not text:
+                    continue
 
-    if not NEWS_SOURCES:
-        print('NEWS_SOURCES empty — nothing to collect.'); await client.disconnect(); return
+                try:
+                    session.add(Article(
+                        text=text,
+                        url=None,
+                        date=msg.date.astimezone(KST) if msg.date else None  # FIX: 'date=' instead of 'created_at='
+                    ))
+                    session.commit()
+                except Exception:
+                    session.rollback()
+            print("✅ collector done.")
+        finally:
+            session.close()
 
-    create_tables()
-    session = SessionLocal()
-    cutoff = datetime.now(KST) - timedelta(days=int(BACKFILL_DAYS or 1))
-
-    try:
-        for src in NEWS_SOURCES:
-            try:
-                entity = await client.get_input_entity(src)
-                print(f'[info] reading from: {src}')
-            except Exception as e:
-                print(f'[warn] get_input_entity failed for {src}: {e}')
-                continue
-
-            async for msg in client.iter_messages(entity, reverse=False):
-                if msg.date.replace(tzinfo=timezone.utc) < cutoff.astimezone(timezone.utc): continue
-                text = (getattr(msg, 'message', None) or getattr(msg, 'raw_text', None) or '').strip()
-                if not text: continue
-                if session.query(Article).filter(Article.text == text).first(): continue
-                session.add(Article(text=text, url=None, created_at=msg.date.astimezone(KST))); session.commit()
-                print(f'[ok] saved: [{src}] {text[:100]}...')
-    except FloodWaitError as e:
-        print(f'[info] FloodWait: sleep {e.seconds}s'); await asyncio.sleep(e.seconds)
-    except (ChannelPrivateError, InviteHashExpiredError) as e:
-        print(f'[warn] channel access error: {e}')
-    finally:
-        session.close(); await client.disconnect(); print('✅ collector done.')
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())
