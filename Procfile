@@ -1,1 +1,1 @@
-worker: python3 -V
+worker: /app/.venv/bin/python validate_session.py && /app/.venv/bin/python collector_telethon.py
