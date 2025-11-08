@@ -71,15 +71,15 @@ async def ensure_joined_public(entity_like: str):
 
 @client.on(events.NewMessage(chats=SRC_LIST))
 async def on_new_message(ev: events.NewMessage.Event):
-    text = (ev.raw_text or \"\").strip()
+    text = (ev.raw_text or "").strip()
 
     # 링크만 있는 글도 통과 (완전 빈 메시지만 제외)
     if not text and not ev.message.media and not ev.message.entities:
         return
 
     urls = URL_RE.findall(text)
-    base = text if not urls else \" \".join(sorted(set(urls)))
-    k = dedup_key(f\"{ev.chat_id}:{base}\")
+    base = text if not urls else " ".join(sorted(set(urls)))
+    k = dedup_key(f"{ev.chat_id}:{base}")
     if k in _seen:
         return
     _seen.add(k)
@@ -90,7 +90,7 @@ async def on_new_message(ev: events.NewMessage.Event):
         dest_ent = await client.get_entity(DEST)
         await client.send_message(dest_ent, out)
     except Exception as e:
-        print(\"send fail:\", e)
+        print("send fail:", e)
 
 async def main():
     # 실행 시 소스 채널 resolve/조인(안전장치)
@@ -98,14 +98,14 @@ async def main():
         try:
             await ensure_joined_public(s)
         except Exception as e:
-            print(\"join/resolve fail:\", s, e)
+            print("join/resolve fail:", s, e)
 
     await client.start()
     me = await client.get_me()
-    print(\"listening as:\", me.username or me.phone)
-    print(\"sources:\", SRC_LIST)
-    print(\"dest:\", DEST)
+    print("listening as:", me.username or me.phone)
+    print("sources:", SRC_LIST)
+    print("dest:", DEST)
     await client.run_until_disconnected()
 
-if __name__ == \"__main__\":
+if __name__ == "__main__":
     asyncio.run(main())

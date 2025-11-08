@@ -1,1 +1,1 @@
-worker: python listener.py
+worker: python -u run_all.py
