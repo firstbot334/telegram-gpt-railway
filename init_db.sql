@@ -1,7 +1,11 @@
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
-DROP INDEX IF EXISTS ix_articles_text;
+CREATE TABLE IF NOT EXISTS articles (id SERIAL PRIMARY KEY);
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS date TIMESTAMPTZ;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS url VARCHAR;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS text TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS summary TEXT;
 
+DROP INDEX IF EXISTS ix_articles_text;
 CREATE INDEX IF NOT EXISTS ix_articles_text_trgm
-  ON articles
-  USING gin (text gin_trgm_ops);
+  ON articles USING gin (text gin_trgm_ops);

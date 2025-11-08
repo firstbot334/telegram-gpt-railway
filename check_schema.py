@@ -1,4 +1,4 @@
-# check_schema.py — verify schema state
+# check_schema.py — verify columns & indexes
 from db import engine
 
 with engine.begin() as conn:
