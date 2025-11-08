@@ -1,5 +1,4 @@
-# check_schema.py
-# articles 테이블 컬럼 및 인덱스 상태 확인
+# check_schema.py — 스키마 상태 확인 도우미
 from db import engine
 
 with engine.begin() as conn:

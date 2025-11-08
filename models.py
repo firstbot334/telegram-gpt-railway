@@ -13,8 +13,7 @@ class Article(Base):
     summary = Column(Text)
 
 # ────────────────────────────────────────────────
-# 기존 BTREE 인덱스 제거, GIN(trigram) 인덱스 사용
-# 긴 텍스트 저장 시 btree 한도 초과 오류 방지
+# BTREE → GIN(trigram) 인덱스로 전환 (긴 텍스트 안전 + 검색 빠름)
 Index(
     "ix_articles_text_trgm",
     Article.text,
