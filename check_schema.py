@@ -1,4 +1,4 @@
-# check_schema.py — 스키마 상태 확인 도우미
+# check_schema.py — verify schema state
 from db import engine
 
 with engine.begin() as conn:
