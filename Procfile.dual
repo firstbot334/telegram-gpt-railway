@@ -1,1 +1,0 @@
-worker: bash -lc 'python3 validate_session.py && (python3 collector_telethon.py & python3 summary_poster.py)'
