@@ -61,7 +61,7 @@ async def summarize_if_needed(text: str) -> str:
 client = TelegramClient(StringSession(SESSION), API_ID, API_HASH)
 
 async def ensure_joined_public(entity_like: str):
-    \"\"\"공개 채널은 실행 시 자동 조인 시도(이미 조인돼 있으면 조용히 통과).\"\"\"
+    """공개 채널은 실행 시 자동 조인 시도(이미 조인돼 있으면 조용히 통과)."""
     ent = await client.get_entity(entity_like)
     try:
         await client(JoinChannelRequest(ent))
