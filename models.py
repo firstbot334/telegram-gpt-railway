@@ -15,6 +15,7 @@ if DATABASE_URL:
             conn.exec_driver_sql("ALTER TABLE articles ADD COLUMN IF NOT EXISTS url VARCHAR;")
             conn.exec_driver_sql("ALTER TABLE articles ADD COLUMN IF NOT EXISTS text TEXT;")
             conn.exec_driver_sql("ALTER TABLE articles ADD COLUMN IF NOT EXISTS summary TEXT;")
+            conn.exec_driver_sql("ALTER TABLE articles ADD COLUMN IF NOT EXISTS source VARCHAR;")
             conn.exec_driver_sql("DROP INDEX IF EXISTS ix_articles_text;")
             conn.exec_driver_sql("CREATE INDEX IF NOT EXISTS ix_articles_text_trgm ON articles USING gin (text gin_trgm_ops);")
     except Exception:
@@ -35,6 +36,7 @@ class Article(Base):
     url = Column(String)
     text = Column(Text)
     summary = Column(Text)
+    source = Column(String)  # NEW: channel username or id
 
 Index(
     "ix_articles_text_trgm",
