@@ -1,0 +1,1 @@
+web: bash -lc ./start.sh
