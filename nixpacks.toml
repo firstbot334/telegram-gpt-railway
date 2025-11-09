@@ -1,0 +1,18 @@
+# Force Nixpacks to treat this as a Python app and install Python 3.11
+providers = ["python"]
+
+[phases.setup]
+# Ensure Python 3.11 is available
+nixPkgs = ["python311", "pip"]
+
+[phases.install]
+# Create our own venv and install deps
+cmds = [
+  "python3 -m venv /app/.venv",
+  "/app/.venv/bin/pip install --upgrade pip",
+  "/app/.venv/bin/pip install -r requirements.txt"
+]
+
+[start]
+# Start with absolute interpreter path to avoid PATH issues
+cmd = "/app/.venv/bin/python validate_session.py && /app/.venv/bin/python collector_telethon.py"
