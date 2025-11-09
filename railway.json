@@ -1,0 +1,6 @@
+{
+  "build": {
+    "builder": "dockerfile"
+  },
+  "start": "bash -lc ./start_safe.sh"
+}
