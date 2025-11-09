@@ -1,1 +1,0 @@
-# Public Channel Ready bot\n\nUse @username or https://t.me/username in SRC_CHANNELS.\nGenerated: 2025-11-09 09:09 UTC\n
